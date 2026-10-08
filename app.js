@@ -36,23 +36,70 @@ function zakonczTure() {
 // SEKCJA A — INFORMACJE I MAPA
 function nazwaPokoju(numer) {
   // TODO A1: switch; zwroc nazwe pokoju jako tekst.
+  switch(numer)
+  {
+    case 1:
+      return "Recepcja";
+    
+    case 2:
+      return "Magazyn";
+
+    case 3:
+      return "Serwerownia";
+
+    case 4:
+      return "Wyjscie";
+
+    default:
+      return "Nieznane pomieszczenie";
+  }
   return "Nazwa do uzupelnienia";
 }
 function pomoc() {
-  console.log('Dostepne: start(), pomoc(), status(), mapa(), rozejrzyj(), idz("prawo"), akcja("karta")');
+  console.log('Dostepne: start(), pomoc(), status(), mapa(), rozejrzyj(), idz("prawo"), idz("lewo"), akcja("karta"), akcja("bezpiecznik"), akcja("napraw"), akcja("wyjdz")');
   // TODO A5: dopisz pozostale kierunki i akcje oraz zasade kosztu.
+  console.log('idz() oraz akcja() ktore zakoncza sie powodzeniem zmniejszaja dostepna energie o 1, przy energii 0 gra zakonczy sie porazka, wyjatkiem jest jak ostatnim punktem energii otworzymy drzwi to wtedy mozna wyjsc mimo energii 0');
 }
 function status() {
   // TODO A3: wypisz pokoj, energie, przedmioty, zasilanie i stan gry.
-  console.log("Status do uzupelnienia");
+  console.log(`Pokoj: ${pokoj} ${nazwaPokoju(pokoj)}`);
+  console.log(`Energia: ${energia}`);
+  console.log(`Karta: ${karta ? "tak" : "nie"}`);
+  console.log(`Bezpiecznik: ${bezpiecznik ? "tak" : "nie"}`);
+  console.log(`Zasilanie: ${zasilanie ? "tak" : "nie"}`);
+  console.log(`Koniec: ${koniec ? "tak" : "nie"}`);
+  console.log(`Wygrana: ${wygrana ? "tak" : "nie"}`);
+  //console.log("Status do uzupelnienia");
 }
 function mapa() {
   // TODO A2: petla for od 1 do 4; nazwa i znacznik aktualnego pokoju.
-  console.log("Mapa do uzupelnienia");
+  for(let numer = 1; numer <= 4; numer++)
+  {
+    console.log(`${numer} ${nazwaPokoju(numer)} ${(numer == pokoj) ? "<-- jestes tutaj":""}`);
+  }
+  //console.log("Mapa do uzupelnienia");
 }
 function rozejrzyj() {
   // TODO A4: switch(pokoj); opis zgodny ze stanem przedmiotow.
-  console.log("Opis pokoju do uzupelnienia");
+  switch(pokoj)
+  {
+    case 1:
+      console.log(!karta ? "Karta lezy na biurku" : "Biurko jest puste");
+      break;
+    
+    case 2:
+      console.log((!bezpiecznik && !zasilanie) ? "Bezpiecznik lezy na polce" : "Polka jest pusta");
+      break;
+
+    case 3:
+      console.log(zasilanie ? "Zasilanie dziala!" : "Zasilanie nie dziala");
+      break;
+
+    case 4:
+      console.log(`Aby wyjsc potrzebujesz ${!karta ? (!zasilanie ? "karte i zasilanie" : "karte") : (!zasilanie ? "zasilanie" : "mozesz wyjsc")}`);
+      break;
+  }
+  //console.log("Opis pokoju do uzupelnienia");
 }
 
 // SEKCJA B — RUCH
