@@ -58,17 +58,42 @@ function rozejrzyj() {
 // SEKCJA B — RUCH
 function idz(kierunek) {
   // TODO B1: zablokuj ruch po koncu gry.
+  if (koniec) {
+    console.log("Koniec gry.");
+    return;
+  }
   // TODO B2: switch kierunku; oblicz kandydat na nowy pokoj.
+  let nastepnyPokoj = pokoj
+  switch(kierunek)
+  {
+    
+    case "prawo":
+      nastepnyPokoj++;
+      return;
+    case "lewo":
+      nastepnyPokoj--;
+      return;
+    default:
+      console.log('Pokoje sa tylko w "lewo" lub "prawo".');
+    return;
+  }
   // TODO B3: odrzuc pokoj poza 1..4 i nieznany kierunek bez kosztu.
+  if (nastepnyPokoj > 4 || nastepnyPokoj < 1) {
+    console.log(`W ${kierunek} jest sciana.`);
+    return;
+  }
   // TODO B4: zapisz poprawny pokoj, rozejrzyj(), zakonczTure().
-  console.log("Ruch do uzupelnienia");
+  pokoj = nastepnyPokoj;
+  rozejrzyj();
+  zakonczTure();
+  //console.log("Ruch do uzupelnienia");
 }
 
 // SEKCJA C — PRZEDMIOTY I WYGRANA
 function akcja(co) {
   // TODO C1: zablokuj akcje po koncu gry.
   if (koniec) {
-    console.log("Koniec gry");
+    console.log("Koniec gry.");
     return;
   }
   // TODO C2: switch: karta / bezpiecznik / napraw / wyjdz.
@@ -84,11 +109,8 @@ function akcja(co) {
       console.log("Zabierasz karte.");
       break;
     case "bezpiecznik":
-      if (pokoj !== 2 || bezpiecznik) {
+      if (pokoj !== 2 || bezpiecznik || zasilanie) {
         console.log("Tutaj nie ma bezpiecznika do zabrania.");
-        return;
-      } else if (zasilanie){
-        console.log("Nie potrzebujesz juz bezpiecznika.");
         return;
       }
       bezpiecznik = true;
@@ -122,7 +144,7 @@ function akcja(co) {
       console.log("Zabierasz karte.");
       break;
     default:
-      console.log("Bledna akcja.");
+      console.log('jedyne akcje to "karta", "bezpiecznik", "napraw" i "wyjdz".');
       return;
   }
   // TODO C3: przy odrzuceniu return; przy sukcesie break.
