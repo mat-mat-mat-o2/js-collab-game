@@ -96,7 +96,10 @@ function rozejrzyj() {
       break;
 
     case 4:
-      console.log(`Aby wyjsc potrzebujesz ${!karta ? (!zasilanie ? "karte i zasilanie" : "karte") : (!zasilanie ? "zasilanie" : "mozesz wyjsc")}`);
+      if(!karta || !zasilanie)
+      {
+        console.log(`Aby wyjsc potrzebujesz ${!karta ? (!zasilanie ? "karte i zasilanie" : "karte") : "zasilanie"}`);
+      }
       break;
   }
   //console.log("Opis pokoju do uzupelnienia");
@@ -116,10 +119,10 @@ function idz(kierunek) {
     
     case "prawo":
       nastepnyPokoj++;
-      return;
+      break;
     case "lewo":
       nastepnyPokoj--;
-      return;
+      break;
     default:
       console.log('Pokoje sa tylko w "lewo" lub "prawo".');
     return;
