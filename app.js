@@ -123,6 +123,7 @@ function rozejrzyj() {
           console.log("Aby wyjsc potrzebujesz zasilanie");
         }
       }
+      console.log("Drzwi otwarte mozesz wyjsc");
       break;
   }
   //console.log("Opis pokoju do uzupelnienia");
