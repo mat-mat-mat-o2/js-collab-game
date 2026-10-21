@@ -25,9 +25,9 @@ function start() {
 function zakonczTure() {
   energia = energia - 1;
   console.log("Pozostala energia: " + energia);
-  if (wygrana) {
+  if(wygrana) {
     console.log("WYGRANA! Drzwi otwarte. Mozesz wrocic do domu.");
-  } else if (energia === 0) {
+  } else if(energia === 0) {
     koniec = true;
     console.log("PRZEGRANA. Zasilanie awaryjne padlo. Wpisz start().");
   }
@@ -53,7 +53,7 @@ function nazwaPokoju(numer) {
     default:
       return "Nieznane pomieszczenie";
   }
-  return "Nazwa do uzupelnienia";
+  //return "Nazwa do uzupelnienia";
 }
 function pomoc() {
   console.log('Dostepne: start(), pomoc(), status(), mapa(), rozejrzyj(), idz("prawo"), idz("lewo"), akcja("karta"), akcja("bezpiecznik"), akcja("napraw"), akcja("wyjdz")');
@@ -75,7 +75,11 @@ function mapa() {
   // TODO A2: petla for od 1 do 4; nazwa i znacznik aktualnego pokoju.
   for(let numer = 1; numer <= 4; numer++)
   {
-    console.log(`${numer} ${nazwaPokoju(numer)} ${(numer == pokoj) ? "<-- jestes tutaj":""}`);
+    if(numer == pokoj) {
+      console.log(`${numer} ${nazwaPokoju(numer)} "<-- jestes tutaj"`);
+    } else {
+      console.log(`${numer} ${nazwaPokoju(numer)}`);
+    }
   }
   //console.log("Mapa do uzupelnienia");
 }
@@ -84,21 +88,40 @@ function rozejrzyj() {
   switch(pokoj)
   {
     case 1:
-      console.log(!karta ? "Karta lezy na biurku" : "Biurko jest puste");
+      if(!karta) {
+        console.log("Karta lezy na biurku");
+      } else {
+        console.log("Biurko jest puste");
+      }
       break;
     
     case 2:
-      console.log((!bezpiecznik && !zasilanie) ? "Bezpiecznik lezy na polce" : "Polka jest pusta");
+      if(!bezpiecznik && !zasilanie) {
+        console.log("Bezpiecznik lezy na polce");
+      } else {
+        console.log("Polka jest pusta");
+      }
       break;
 
     case 3:
-      console.log(zasilanie ? "Zasilanie dziala!" : "Zasilanie nie dziala");
+      if(zasilanie) {
+        console.log("Zasilanie dziala!");
+      } else {
+        console.log("Zasilanie nie dziala");
+      }
       break;
 
     case 4:
-      if(!karta || !zasilanie)
-      {
-        console.log(`Aby wyjsc potrzebujesz ${!karta ? (!zasilanie ? "karte i zasilanie" : "karte") : "zasilanie"}`);
+      if(!karta || !zasilanie) {
+        if(!karta) {
+          if(!zasilanie) {
+            console.log("Aby wyjsc potrzebujesz karte i zasilanie");
+          } else {
+            console.log("Aby wyjsc potrzebujesz karte");
+          }
+        } else {
+          console.log("Aby wyjsc potrzebujesz zasilanie");
+        }
       }
       break;
   }
@@ -116,13 +139,14 @@ function idz(kierunek) {
   let nastepnyPokoj = pokoj
   switch(kierunek)
   {
-    
     case "prawo":
       nastepnyPokoj++;
       break;
+
     case "lewo":
       nastepnyPokoj--;
       break;
+
     default:
       console.log('Pokoje sa tylko w "lewo" lub "prawo".');
     return;
@@ -158,6 +182,7 @@ function akcja(co) {
       karta = true;
       console.log("Zabierasz karte.");
       break;
+
     case "bezpiecznik":
       if (pokoj !== 2 || bezpiecznik || zasilanie) {
         console.log("Tutaj nie ma bezpiecznika do zabrania.");
@@ -166,6 +191,7 @@ function akcja(co) {
       bezpiecznik = true;
       console.log("Zabierasz bezpiecznik.");
       break;
+
     case "napraw":
       if (pokoj !== 3 || zasilanie) {
         console.log("Tutaj nie ma nic do naprawienia.");
@@ -178,6 +204,7 @@ function akcja(co) {
       zasilanie = true;
       console.log("Naprawiasz zasilanie.");
       break;
+
     case "wyjdz":
       if (pokoj !== 4) {
         console.log("Nie ma dokad wyjsc.");
@@ -193,6 +220,7 @@ function akcja(co) {
       koniec = true;
       console.log("Zabierasz karte.");
       break;
+      
     default:
       console.log('jedyne akcje to "karta", "bezpiecznik", "napraw" i "wyjdz".');
       return;
