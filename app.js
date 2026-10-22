@@ -26,7 +26,7 @@ function zakonczTure() {
   energia = energia - 1;
   console.log("Pozostala energia: " + energia);
   if(wygrana) {
-    console.log("WYGRANA! Drzwi otwarte. Mozesz wrocic do domu.");
+    console.log("WYGRANA! Uciekles z serwerowni. Mozesz wrocic do domu.");
   } else if(energia === 0) {
     koniec = true;
     console.log("PRZEGRANA. Zasilanie awaryjne padlo. Wpisz start().");
