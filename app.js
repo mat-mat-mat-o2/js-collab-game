@@ -66,31 +66,55 @@ function mapa() {
   // TODO A2: petla for od 1 do 4; nazwa i znacznik aktualnego pokoju.
   for(let numer = 1; numer <= 4; numer++)
   {
-    console.log(`${numer} ${nazwaPokoju(numer)} ${(numer == stan.pokoj) ? "<-- jestes tutaj":""}`);
+    if(numer == pokoj) {
+      console.log(`${numer} ${nazwaPokoju(numer)} "<-- jestes tutaj"`);
+    } else {
+      console.log(`${numer} ${nazwaPokoju(numer)}`);
+    }
   }
   //console.log("Mapa do uzupelnienia");
 }
 function rozejrzyj() {
   // TODO A4: switch(pokoj); opis zgodny ze stanem przedmiotow.
-  switch(stan.pokoj)
+  switch(pokoj)
   {
     case 1:
-      console.log(!stan.karta ? "Karta lezy na biurku" : "Biurko jest puste");
+      if(!stan.karta) {
+        console.log("Karta lezy na biurku");
+      } else {
+        console.log("Biurko jest puste");
+      }
       break;
     
     case 2:
-      console.log((!stan.bezpiecznik && !stan.zasilanie) ? "Bezpiecznik lezy na polce" : "Polka jest pusta");
+      if(!stan.bezpiecznik && !stan.zasilanie) {
+        console.log("Bezpiecznik lezy na polce");
+      } else {
+        console.log("Polka jest pusta");
+      }
       break;
 
     case 3:
-      console.log(stan.zasilanie ? "Zasilanie dziala!" : "Zasilanie nie dziala");
+      if(stan.zasilanie) {
+        console.log("Zasilanie dziala!");
+      } else {
+        console.log("Zasilanie nie dziala");
+      }
       break;
 
     case 4:
-      if(!stan.karta || !stan.zasilanie)
-      {
-        console.log(`Aby wyjsc potrzebujesz ${!stan.karta ? (!stan.zasilanie ? "karte i zasilanie" : "karte") : "zasilanie"}`);
+      if(!stan.karta || !stan.zasilanie) {
+        if(!stan.karta) {
+          if(!stan.zasilanie) {
+            console.log("Aby wyjsc potrzebujesz karte i zasilanie");
+          } else {
+            console.log("Aby wyjsc potrzebujesz karte");
+          }
+        } else {
+          console.log("Aby wyjsc potrzebujesz zasilanie");
+        }
       }
+      console.log("Drzwi otwarte mozesz wyjsc");
       break;
   }
   //console.log("Opis pokoju do uzupelnienia");

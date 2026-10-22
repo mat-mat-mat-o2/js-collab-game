@@ -54,10 +54,10 @@ function stanPoczatkowy() {
 function zakonczTure() {
   stan.energia = stan.energia - 1;
   console.log("Pozostala energia: " + stan.energia);
-  if (stan.wygrana) {
-    console.log("WYGRANA! Drzwi otwarte. Mozesz wrocic do domu.");
-  } else if (stan.energia === 0) {
-    stan.koniec = true;
+  if(wygrana) {
+    console.log("WYGRANA! Uciekles z serwerowni. Mozesz wrocic do domu.");
+  } else if(energia === 0) {
+    koniec = true;
     console.log("PRZEGRANA. Zasilanie awaryjne padlo. Wpisz start().");
   }
 }
