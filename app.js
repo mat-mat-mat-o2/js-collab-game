@@ -34,9 +34,9 @@ function rozejrzyj() {
     return;
   }
   
-  switch(stan.pokoj)
+  switch(nazwaPokoju(stan.pokoj))
   {
-    case 1:
+    case "Recepcja":
       if(!stan.karta) {
         console.log("Karta lezy na biurku");
       } else {
@@ -44,7 +44,7 @@ function rozejrzyj() {
       }
       break;
     
-    case 2:
+    case "Magazyn":
       if(!stan.bezpiecznik && !stan.zasilanie) {
         console.log("Bezpiecznik lezy na polce");
       } else {
@@ -52,7 +52,7 @@ function rozejrzyj() {
       }
       break;
 
-    case 3:
+    case "Serwerownia":
       if(stan.zasilanie) {
         console.log("Zasilanie dziala!");
       } else {
@@ -60,7 +60,7 @@ function rozejrzyj() {
       }
       break;
 
-    case 4:
+    case "Wyjscie":
       if(!stan.karta || !stan.zasilanie) {
         if(!stan.karta) {
           if(!stan.zasilanie) {
@@ -72,7 +72,9 @@ function rozejrzyj() {
           console.log("Aby wyjsc potrzebujesz zasilanie");
         }
       }
-      console.log("Drzwi otwarte mozesz wyjsc");
+      else {
+        console.log("Drzwi otwarte mozesz wyjsc");
+      }
       break;
   }
 }
@@ -80,14 +82,14 @@ function rozejrzyj() {
 // SEKCJA 0 — GOTOWY SILNIK NAUCZYCIELA
 function start() {
   stan.wersja = WERSJA;
-  stan.pokoj = 1;
+  stan.pokoj = START_POKOJ;
   stan.energia = MAKS_ENERGIA;
   stan.karta = false;
   stan.bezpiecznik = false;
   stan.zasilanie = false;
   stan.koniec = false;
   stan.wygrana = false;
-  console.log("UCIECZKA Z SERWEROWNI. Zasilanie awaryjne wystarczy na 10 tur.");
+  console.log(`UCIECZKA Z SERWEROWNI. Zasilanie awaryjne wystarczy na ${MAKS_ENERGIA} tur.`);
   pomoc();
   rozejrzyj();
 }
@@ -105,7 +107,7 @@ function status() {
 function mapa() {
   for(let numer = 1; numer <= 4; numer++)
   {
-    if(numer == pokoj) {
+    if(numer == stan.pokoj) {
       console.log(`${numer} ${nazwaPokoju(numer)} "<-- jestes tutaj"`);
     } else {
       console.log(`${numer} ${nazwaPokoju(numer)}`);
@@ -167,7 +169,7 @@ function akcja(co) {
   switch(co)
   {
     case "karta":
-      if (stan.pokoj !== 1 || stan.karta) {
+      if (nazwaPokoju(stan.pokoj) !== "Recepcja" || stan.karta) {
         console.log("Tutaj nie ma karty do zabrania.");
         return;
       }
@@ -176,7 +178,7 @@ function akcja(co) {
       break;
 
     case "bezpiecznik":
-      if (stan.pokoj !== 2 || stan.bezpiecznik || stan.zasilanie) {
+      if (nazwaPokoju(stan.pokoj) !== "Magazyn" || stan.bezpiecznik || stan.zasilanie) {
         console.log("Tutaj nie ma bezpiecznika do zabrania.");
         return;
       }
@@ -185,7 +187,7 @@ function akcja(co) {
       break;
 
     case "napraw":
-      if (stan.pokoj !== 3 || stan.zasilanie) {
+      if (nazwaPokoju(stan.pokoj) !== "Serwerownia" || stan.zasilanie) {
         console.log("Tutaj nie ma nic do naprawienia.");
         return;
       } else if (!stan.bezpiecznik) {
@@ -198,7 +200,7 @@ function akcja(co) {
       break;
 
     case "wyjdz":
-      if (stan.pokoj !== 4) {
+      if (nazwaPokoju(stan.pokoj) !== "Wyjscie") {
         console.log("Nie ma dokad wyjsc.");
         return;
       } else if(!stan.karta) {
