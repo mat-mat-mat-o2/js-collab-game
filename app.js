@@ -35,6 +35,11 @@ function pomoc() {
 }
 
 function rozejrzyj() {
+  if (stan.koniec) {
+    console.log("Koniec gry.");
+    return;
+  }
+  
   switch(stan.pokoj)
   {
     case 1:
@@ -96,7 +101,6 @@ function rozejrzyj() {
       break;
 
   }
-  //console.log("Opis pokoju do uzupelnienia");
 }
 
 // SEKCJA 0 — GOTOWY SILNIK NAUCZYCIELA
@@ -119,8 +123,6 @@ function status() {
   }
   console.log(`Koniec: ${stan.koniec ? "tak" : "nie"}`);
   console.log(`Wygrana: ${stan.wygrana ? "tak" : "nie"}`);
-  
-  //console.log("Status do uzupelnienia");
 }
 
 function mapa() {
@@ -131,7 +133,6 @@ function mapa() {
       console.log(`${numer} ${nazwaPokoju(numer)}`);
     }
   }
-  //console.log("Mapa do uzupelnienia");
 }
 
 function zakonczTure() {
@@ -193,7 +194,6 @@ function idz(kierunek) {
   stan.pokoj = nastepnyPokoj;
   rozejrzyj();
   zakonczTure();
-  //console.log("Ruch do uzupelnienia");
 }
 
 // SEKCJA C — PRZEDMIOTY I WYGRANA
@@ -218,6 +218,7 @@ function akcja(co) {
       stan.karta = true;
       console.log("Zabierasz karte.");
       break;
+
     case "bezpiecznik":
       if (stan.pokoj !== 2 || stan.bezpiecznik || stan.zasilanie) {
         console.log("Tutaj nie ma bezpiecznika do zabrania.");
@@ -226,6 +227,7 @@ function akcja(co) {
       stan.bezpiecznik = true;
       console.log("Zabierasz bezpiecznik.");
       break;
+
     case "napraw":
       if (stan.pokoj !== 3 || stan.zasilanie) {
         console.log("Tutaj nie ma nic do naprawienia.");
@@ -238,6 +240,7 @@ function akcja(co) {
       stan.zasilanie = true;
       console.log("Naprawiasz zasilanie.");
       break;
+
     case "wyjdz":
       if (stan.pokoj !== 4 && stan.pokoj!==6) {
         console.log("Nie ma dokad wyjsc.");
@@ -287,14 +290,50 @@ function akcja(co) {
         console.log("Okno jest juz otwarte, mozesz wyjsc");
       }
       break;
+
     default:
       console.log('jedyne akcje to "karta", "bezpiecznik", "napraw" i "wyjdz".');
       return;
   }
 
   zakonczTure();
+}
 
-  //console.log("Akcje do uzupelnienia");
+function eksportuj() {
+  const pakiet = {stan};
+  const postep = JSON.stringify(pakiet);
+  console.log(postep);
+}
+
+function importuj() {
+  let tekst = prompt("Wklej zawartosc z postep.json");
+  let kandydat;
+  try {
+    kandydat = JSON.parse(tekst);
+  } catch {
+    throw new Error("Niepoprawny JSON");
+  }
+  if(kandydat === null || 
+    typeof kandydat !== "object" || 
+    kandydat.stan === null ||
+    typeof kandydat.stan !== "object" ||
+    !Number.isInteger(kandydat.stan.wersja) || 
+    kandydat.stan.wersja !== stan.wersja || 
+    !Number.isInteger(kandydat.stan.pokoj) || 
+    kandydat.stan.pokoj < 1 || 
+    !Number.isInteger(kandydat.stan.energia) || 
+    kandydat.stan.energia < 0 || 
+    kandydat.stan.energia > MAKS_ENERGIA || 
+    typeof kandydat.stan.karta !== "boolean" || 
+    typeof kandydat.stan.bezpiecznik !== "boolean" || 
+    typeof kandydat.stan.zasilanie !== "boolean" || 
+    typeof kandydat.stan.koniec !== "boolean" || 
+    typeof kandydat.stan.wygrana !== "boolean") {
+    throw new Error("Zle dane");
+  }
+  Object.assign(stan, kandydat.stan);
+  status();
+  rozejrzyj();
 }
 
 

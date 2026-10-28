@@ -1,4 +1,5 @@
 const MAKS_ENERGIA = 10;
+const WERSJA = 1;
 
 const pokoje = [
   { id: 1, nazwa: "Recepcja"},
@@ -11,6 +12,7 @@ const pokoje = [
 
 function stanPoczatkowy() {
   return {
+    wersja: WERSJA,
     pokoj: 1,
     energia: MAKS_ENERGIA,
     karta: false,
