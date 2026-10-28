@@ -39,7 +39,7 @@ function rozejrzyj() {
     return;
   }
   
-  switch(stan.pokoj)
+  switch(nazwaPokoju(stan.pokoj))
   {
     case "Zaplecze biblioteki":
       if(stan.okno) {
