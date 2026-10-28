@@ -34,6 +34,11 @@ function pomoc() {
 }
 
 function rozejrzyj() {
+  if (stan.koniec) {
+    console.log("Koniec gry.");
+    return;
+  }
+  
   switch(stan.pokoj)
   {
     case "Zaplecze biblioteki":
@@ -274,6 +279,43 @@ function akcja(co) {
       return;
   }
   zakonczTure();
+}
+
+function eksportuj() {
+  const pakiet = {stan};
+  const postep = JSON.stringify(pakiet);
+  console.log(postep);
+}
+
+function importuj() {
+  let tekst = prompt("Wklej zawartosc z postep.json");
+  let kandydat;
+  try {
+    kandydat = JSON.parse(tekst);
+  } catch {
+    throw new Error("Niepoprawny JSON");
+  }
+  if(kandydat === null || 
+    typeof kandydat !== "object" || 
+    kandydat.stan === null ||
+    typeof kandydat.stan !== "object" ||
+    !Number.isInteger(kandydat.stan.wersja) || 
+    kandydat.stan.wersja !== stan.wersja || 
+    !Number.isInteger(kandydat.stan.pokoj) || 
+    kandydat.stan.pokoj < 1 || 
+    !Number.isInteger(kandydat.stan.energia) || 
+    kandydat.stan.energia < 0 || 
+    kandydat.stan.energia > MAKS_ENERGIA || 
+    typeof kandydat.stan.karta !== "boolean" || 
+    typeof kandydat.stan.bezpiecznik !== "boolean" || 
+    typeof kandydat.stan.zasilanie !== "boolean" || 
+    typeof kandydat.stan.koniec !== "boolean" || 
+    typeof kandydat.stan.wygrana !== "boolean") {
+    throw new Error("Zle dane");
+  }
+  Object.assign(stan, kandydat.stan);
+  status();
+  rozejrzyj();
 }
 
 
