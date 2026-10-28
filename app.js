@@ -18,6 +18,12 @@ function nazwaPokoju(numer) {
     case 4:
       return "Wyjscie";
 
+    case 5:
+      return (stan.klucz)?"Biblioteka":"???";
+
+    case 6:
+      return (stan.drzwi)?"Zaplecze biblioteki":"???";
+
     default:
       return "Nieznane pomieszczenie";
   }
@@ -72,21 +78,34 @@ function rozejrzyj() {
           console.log("Aby wyjsc potrzebujesz zasilanie");
         }
       }
-      console.log("Drzwi otwarte mozesz wyjsc");
+      else{
+          console.log("Drzwi otwarte mozesz wyjsc");
+      }
+      
       break;
+
+    case 5:
+      if(stan.drzwi) {
+        console.log("Widzisz drzwi, ktore sa otwarte");
+      } else {
+        console.log("Widzisz drzwi, ktore sa zamkniete");
+      }
+      break;
+
+    case 6:
+      if(stan.okno) {
+        console.log("Widzisz okno, ktore jest otwarte");
+      } else {
+        console.log("Widzisz okno, ktore jest zamkniete");
+      }
+      break;
+
   }
 }
 
 // SEKCJA 0 — GOTOWY SILNIK NAUCZYCIELA
 function start() {
-  stan.wersja = WERSJA;
-  stan.pokoj = 1;
-  stan.energia = MAKS_ENERGIA;
-  stan.karta = false;
-  stan.bezpiecznik = false;
-  stan.zasilanie = false;
-  stan.koniec = false;
-  stan.wygrana = false;
+  stan=stanPoczatkowy();
   console.log("UCIECZKA Z SERWEROWNI. Zasilanie awaryjne wystarczy na 10 tur.");
   pomoc();
   rozejrzyj();
@@ -98,15 +117,18 @@ function status() {
   console.log(`Karta: ${stan.karta ? "tak" : "nie"}`);
   console.log(`Bezpiecznik: ${stan.bezpiecznik ? "tak" : "nie"}`);
   console.log(`Zasilanie: ${stan.zasilanie ? "tak" : "nie"}`);
+  if(stan.klucz)
+  {
+    console.log(`Klucz: ${stan.klucz?"tak":"nie"}`);
+  }
   console.log(`Koniec: ${stan.koniec ? "tak" : "nie"}`);
   console.log(`Wygrana: ${stan.wygrana ? "tak" : "nie"}`);
 }
 
 function mapa() {
-  for(let numer = 1; numer <= 4; numer++)
-  {
-    if(numer == pokoj) {
-      console.log(`${numer} ${nazwaPokoju(numer)} "<-- jestes tutaj"`);
+  for(let numer = 1; numer <= 6; numer++) {
+    if(numer == stan.pokoj) {
+      console.log(`${numer} ${nazwaPokoju(numer)} <-- jestes tutaj`);
     } else {
       console.log(`${numer} ${nazwaPokoju(numer)}`);
     }
@@ -133,20 +155,38 @@ function idz(kierunek) {
   }
 
   let nastepnyPokoj = stan.pokoj
+
   switch(kierunek)
   {
     case "prawo":
       nastepnyPokoj++;
+      if(stan.pokoj===5) {
+        nastepnyPokoj=1;
+      } else if(stan.pokoj===6) {
+        nastepnyPokoj=5;
+      }
       break;
     case "lewo":
       nastepnyPokoj--;
+      if(stan.pokoj===1) {
+        nastepnyPokoj=5;
+      } else if(stan.pokoj===5) {
+        if(!stan.drzwi){
+          console.log("Musisz otworzyc drzwi do zaplecza kluczem");
+          nastepnyPokoj=5;
+          return;
+        } else {
+          nastepnyPokoj=6;
+        }
+        
+      }
       break;
     default:
       console.log('Pokoje sa tylko w "lewo" lub "prawo".');
     return;
   }
 
-  if (nastepnyPokoj > 4 || nastepnyPokoj < 1) {
+  if ((nastepnyPokoj > 4 && !stan.klucz) || nastepnyPokoj > 6 || nastepnyPokoj < 1) {
     console.log(`W ${kierunek} jest sciana.`);
     return;
   }
@@ -168,7 +208,11 @@ function akcja(co) {
   {
     case "karta":
       if (stan.pokoj !== 1 || stan.karta) {
-        console.log("Tutaj nie ma karty do zabrania.");
+        console.log("Tutaj nie ma karty do zabrania");
+        if(stan.pokoj === 1 && !stan.klucz)
+        {
+          console.log(" ale znajdujesz klucz lezacy na oddalonej szafce. Uzyj akcja('klucz') aby go zebrac!");
+        }
         return;
       }
       stan.karta = true;
@@ -198,19 +242,53 @@ function akcja(co) {
       break;
 
     case "wyjdz":
-      if (stan.pokoj !== 4) {
+      if (stan.pokoj !== 4 && stan.pokoj!==6) {
         console.log("Nie ma dokad wyjsc.");
         return;
-      } else if(!stan.karta) {
+      } 
+      else if(stan.pokoj === 4 && !stan.karta) {
         console.log("Nie masz karty.");
         return;
-      } else if (!stan.zasilanie) {
+      } else if (stan.pokoj ===4 && !stan.zasilanie) {
         console.log("Nie ma zasilania.");
+        return;
+      }
+      else if (stan.pokoj === 6 && !stan.okno){
+        console.log("Okno jest zamkniete");
         return;
       }
       stan.wygrana = true;
       stan.koniec = true;
-      console.log("Zabierasz karte.");
+      break;
+    case "klucz":
+      if(stan.pokoj !== 1 || stan.klucz){
+        console.log("Tutaj nie ma klucza do zebrania");
+        return;
+      }
+      stan.klucz=true;
+      console.log("Zabierasz klucz");
+      break;
+    case "otworz":
+      if(stan.pokoj !== 5 && stan.pokoj !== 6){
+        console.log("Nie ma nic do otwarcia");
+        return;
+      } else if (!stan.klucz) {
+        console.log("Nie masz klucza do tych drzwi");
+        return;
+      } else if (stan.drzwi && stan.pokoj===5){
+        console.log("Drzwi do zaplecza sa otwarte");
+        return;
+      } else if (stan.okno && stan.pokoj===6){
+        console.log("Okno jest otwarte");
+        return;
+      }
+      if(stan.pokoj===5){
+        stan.drzwi=true;
+        console.log("Drzwi do zaplecza sa juz otwarte");
+      } else if (stan.pokoj===6){
+        stan.okno=true;
+        console.log("Okno jest juz otwarte, mozesz wyjsc");
+      }
       break;
 
     default:
