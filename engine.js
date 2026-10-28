@@ -1,4 +1,4 @@
-const MAKS_ENERGIA = 10;
+const MAKS_ENERGIA = 15;
 const WERSJA = 1;
 const START_POKOJ = 3;
 
