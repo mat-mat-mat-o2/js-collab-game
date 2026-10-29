@@ -124,7 +124,14 @@ function wykonajKomende(komenda) {
     console.log("Energia: " + stan.energia);
   }
 
-  return wynik;
+  if(stan.wygrana) {
+    console.log("WYGRANA! Uciekłeś z serwerowni. Możesz wrócić do domu.");
+  } else if(stan.energia === 0) {
+    stan.koniec = true;
+    console.log("PRZEGRANA. Zasilanie awaryjne padło. Wpisz start().");
+  }
+
+  // return wynik;
 }
 
 // SEKCJA B — RUCH
@@ -138,10 +145,14 @@ function akcja(co) {
 }
 
 function eksportuj() {
-  return JSON.stringify({ wersja: WERSJA, stan: stan });
+  const postep = JSON.stringify({ wersja: WERSJA, stan: stan });
+  console.log(postep);
 }
 
-function importuj(tekst) {
+function importuj() {
+
+  let tekst=prompt('Wklej dane importu');
+
   if (typeof tekst !== "string" || tekst.trim() === "") {
     console.log("Brak tekstu do wczytania.");
     return false;

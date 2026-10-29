@@ -203,11 +203,11 @@ function przejscie(stanPrzed, komenda) {
 
   if (stanPo.wygrana || nowaEnergia === 0) stanPo.koniec = true;
 
-  if (stanPo.wygrana) {
-    komunikat += " Wygrana!";
-  } else if (stanPo.koniec) {
-    komunikat += " Brak energii. Koniec gry.";
-  }
+  // if (stanPo.wygrana) {
+  //   komunikat += " Wygrana!";
+  // } else if (stanPo.koniec) {
+  //   komunikat += " Brak energii. Koniec gry.";
+  // }
 
   return { stan: stanPo, komunikat: komunikat };
 }
