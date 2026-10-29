@@ -35,10 +35,10 @@ function rozejrzyj() {
 
   switch (nazwaPokoju(stan.pokoj)) {
     case "Zaplecze biblioteki":
-      console.log(stan.okno ? "Okno jest otwarte." : "Okno jest zamknięte.");
+      console.log(stan.okno ? "Okno jest otwarte." : "Okno jest zamknięte. Uzyj akcja('otworz')");
       break;
     case "Biblioteka":
-      console.log(stan.drzwi ? "Drzwi do zaplecza są otwarte." : "Drzwi do zaplecza są zamknięte.");
+      console.log(stan.drzwi ? "Drzwi do zaplecza są otwarte." : "Drzwi do zaplecza są zamknięte. Uzyj akcja('otworz')");
       break;
     case "Recepcja":
       console.log(stan.karta ? "Biurko jest puste." : "Karta leży na biurku.");

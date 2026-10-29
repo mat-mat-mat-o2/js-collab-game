@@ -108,7 +108,7 @@ function przejscie(stanPrzed, komenda) {
       return { stan: stanPrzed, komunikat: "Ściana." };
     }
     if (stanPrzed.pokoj === 2 && komenda === "lewo" && !stanPrzed.drzwi) {
-      return { stan: stanPrzed, komunikat: "Drzwi są zamknięte." };
+      return { stan: stanPrzed, komunikat: "Drzwi są zamknięte. Uzyj akcja('otworz')" };
     }
 
     zmiany.pokoj = numerDocelowy;
@@ -124,7 +124,7 @@ function przejscie(stanPrzed, komenda) {
           komunikat = "Zabierasz kartę.";
         } else if (!stanPrzed.kluczOdkryty && !stanPrzed.klucz) {
           let nowyStan = { ...stanPrzed, kluczOdkryty: true };
-          return { stan: nowyStan, komunikat: "Nie ma już karty. Widzisz klucz. Użyj akcja('klucz')." };
+          return { stan: nowyStan, komunikat: "Nie ma już karty. Ale obok Biblii JavaScript, która lezy na szafce widzisz klucz. Użyj akcja('klucz')." };
         } else if (stanPrzed.kluczOdkryty && !stanPrzed.klucz) {
           return { stan: stanPrzed, komunikat: "Klucz jest na szafce. Użyj akcja('klucz')." };
         } else {
@@ -172,7 +172,7 @@ function przejscie(stanPrzed, komenda) {
           if (stanPrzed.okno) return { stan: stanPrzed, komunikat: "Okno jest już otwarte." };
           if (!stanPrzed.klucz) return { stan: stanPrzed, komunikat: "Nie masz klucza." };
           zmiany.okno = true;
-          komunikat = "Otwierasz okno.";
+          komunikat = "Otwierasz okno. Uzyj akcja('wyjdz')";
         } else {
           return { stan: stanPrzed, komunikat: "Nie ma tu nic do otwarcia." };
         }
@@ -185,7 +185,7 @@ function przejscie(stanPrzed, komenda) {
           zmiany.wygrana = true;
           komunikat = "Otwierasz wyjście i uciekasz.";
         } else if (stanPrzed.pokoj === 1) {
-          if (!stanPrzed.okno) return { stan: stanPrzed, komunikat: "Okno jest zamknięte." };
+          if (!stanPrzed.okno) return { stan: stanPrzed, komunikat: "Okno jest zamknięte.   " };
           zmiany.wygrana = true;
           komunikat = "Uciekasz przez okno.";
         } else {
