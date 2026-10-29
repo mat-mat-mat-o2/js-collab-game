@@ -37,29 +37,53 @@ function stanPoczatkowy() {
 }
 
 function czyStan(wartosc) {
-  if (wartosc === null || typeof wartosc !== "object" || Array.isArray(wartosc)) return false;
-  if (!Number.isInteger(wartosc.pokoj) || !znajdzPokoj(wartosc.pokoj)) return false;
-  if (!Number.isInteger(wartosc.energia) || wartosc.energia < 0 || wartosc.energia > MAKS_ENERGIA) return false;
+  if (wartosc === null || typeof wartosc !== "object" || Array.isArray(wartosc)) {
+    return false;
+  }
+  if (!Number.isInteger(wartosc.pokoj) || !znajdzPokoj(wartosc.pokoj)) {
+    return false;
+  }
+  if (!Number.isInteger(wartosc.energia) || wartosc.energia < 0 || wartosc.energia > MAKS_ENERGIA) {
+    return false;
+  }
 
   const pola = ["karta", "bezpiecznik", "klucz", "kluczOdkryty", "okno", "drzwi", "zasilanie", "koniec", "wygrana"];
   for (let pole of pola) {
-    if (typeof wartosc[pole] !== "boolean") return false;
+    if (typeof wartosc[pole] !== "boolean") {
+    return false;
+  }
   }
 
-  if (wartosc.bezpiecznik && wartosc.zasilanie) return false;
-  if (wartosc.kluczOdkryty && !wartosc.karta) return false;
-  if (wartosc.klucz && (!wartosc.karta || !wartosc.kluczOdkryty)) return false;
-  if (wartosc.drzwi && !wartosc.klucz) return false;
-  if (wartosc.okno && !wartosc.drzwi) return false;
-  if (wartosc.pokoj === 1 && !wartosc.drzwi) return false;
+  if (wartosc.bezpiecznik && wartosc.zasilanie) {
+    return false;
+  }
+  if (wartosc.kluczOdkryty && !wartosc.karta) {
+    return false;
+  }
+  if (wartosc.klucz && (!wartosc.karta || !wartosc.kluczOdkryty)) {
+    return false;
+  }
+  if (wartosc.drzwi && !wartosc.klucz) {
+    return false;
+  }
+  if (wartosc.okno && !wartosc.drzwi) {
+    return false;
+  }
+  if (wartosc.pokoj === 1 && !wartosc.drzwi) {
+    return false;
+  }
 
   if (wartosc.wygrana) {
     const wyjscieGlowne = wartosc.pokoj === 6 && wartosc.karta && wartosc.zasilanie;
     const wyjsciePrzezOkno = wartosc.pokoj === 1 && wartosc.okno;
-    if (!wartosc.koniec || (!wyjscieGlowne && !wyjsciePrzezOkno)) return false;
+    if (!wartosc.koniec || (!wyjscieGlowne && !wyjsciePrzezOkno)) {
+      return false;
+    }
   }
 
-  if (wartosc.koniec !== (wartosc.wygrana || wartosc.energia === 0)) return false;
+  if (wartosc.koniec !== (wartosc.wygrana || wartosc.energia === 0)) {
+    return false;
+  }
   return true;
 }
 
