@@ -108,7 +108,7 @@ function przejscie(stanPrzed, komenda) {
       return { stan: stanPrzed, komunikat: "Ściana." };
     }
     if (stanPrzed.pokoj === 2 && komenda === "lewo" && !stanPrzed.drzwi) {
-      return { stan: stanPrzed, komunikat: "Drzwi są zamknięte. Uzyj akcja('otworz')" };
+      return { stan: stanPrzed, komunikat: "Drzwi są zamknięte. Użyj akcja('otworz')" };
     }
 
     zmiany.pokoj = numerDocelowy;
@@ -172,7 +172,7 @@ function przejscie(stanPrzed, komenda) {
           if (stanPrzed.okno) return { stan: stanPrzed, komunikat: "Okno jest już otwarte." };
           if (!stanPrzed.klucz) return { stan: stanPrzed, komunikat: "Nie masz klucza." };
           zmiany.okno = true;
-          komunikat = "Otwierasz okno. Uzyj akcja('wyjdz')";
+          komunikat = "Otwierasz okno. Użyj akcja('wyjdz')";
         } else {
           return { stan: stanPrzed, komunikat: "Nie ma tu nic do otwarcia." };
         }
