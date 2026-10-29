@@ -123,8 +123,12 @@ function wykonajKomende(komenda) {
   if (stan.energia !== stanPrzed.energia) {
     console.log("Energia: " + stan.energia);
   }
-
-  return wynik;
+  if (stan.wygrana) {
+      console.log("Wygrana!");
+    } else if (stan.koniec) {
+      console.log("Brak energii. Koniec gry.");
+    }
+  //return wynik;
 }
 
 // SEKCJA B — RUCH
@@ -138,10 +142,13 @@ function akcja(co) {
 }
 
 function eksportuj() {
-  return JSON.stringify({ wersja: WERSJA, stan: stan });
+  const postep = JSON.stringify({ wersja: WERSJA, stan: stan });
+  console.log(postep);
 }
 
-function importuj(tekst) {
+function importuj() {
+    let tekst = prompt("Wklej zawartosc z postep.json");
+
   if (typeof tekst !== "string" || tekst.trim() === "") {
     console.log("Brak tekstu do wczytania.");
     return false;
