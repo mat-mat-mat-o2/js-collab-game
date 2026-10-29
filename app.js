@@ -161,7 +161,7 @@ function importuj() {
   let kandydat;
   try {
     kandydat = JSON.parse(tekst);
-  } catch (blad) {
+  } catch {
     console.log("Błędny JSON.");
     return false;
   }
