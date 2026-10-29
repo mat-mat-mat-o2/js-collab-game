@@ -35,10 +35,10 @@ function rozejrzyj() {
 
   switch (nazwaPokoju(stan.pokoj)) {
     case "Zaplecze biblioteki":
-      console.log(stan.okno ? "Okno jest otwarte." : "Okno jest zamknięte.");
+      console.log(stan.okno ? "Okno jest otwarte." : "Okno jest zamknięte. Użyj akcja('otworz')");
       break;
     case "Biblioteka":
-      console.log(stan.drzwi ? "Drzwi do zaplecza są otwarte." : "Drzwi do zaplecza są zamknięte.");
+      console.log(stan.drzwi ? "Drzwi do zaplecza są otwarte." : "Drzwi do zaplecza są zamknięte. Użyj akcja('otworz')");
       break;
     case "Recepcja":
       console.log(stan.karta ? "Biurko jest puste." : "Karta leży na biurku.");
@@ -123,12 +123,15 @@ function wykonajKomende(komenda) {
   if (stan.energia !== stanPrzed.energia) {
     console.log("Energia: " + stan.energia);
   }
-  if (stan.wygrana) {
-      console.log("Wygrana!");
-    } else if (stan.koniec) {
-      console.log("Brak energii. Koniec gry.");
-    }
-  //return wynik;
+
+  if(stan.wygrana) {
+    console.log("WYGRANA! Uciekłeś z serwerowni. Możesz wrócić do domu.");
+  } else if(stan.energia === 0) {
+    stan.koniec = true;
+    console.log("PRZEGRANA. Zasilanie awaryjne padło. Wpisz start().");
+  }
+
+  // return wynik;
 }
 
 // SEKCJA B — RUCH
@@ -147,7 +150,8 @@ function eksportuj() {
 }
 
 function importuj() {
-    let tekst = prompt("Wklej zawartosc z postep.json");
+
+  let tekst=prompt('Wklej dane importu');
 
   if (typeof tekst !== "string" || tekst.trim() === "") {
     console.log("Brak tekstu do wczytania.");
