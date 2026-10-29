@@ -15,9 +15,7 @@ const LICZBA_POKOI = pokoje.length;
 
 function znajdzPokoj(numer) {
   for (let pokoj of pokoje) {
-    if (pokoj.id === numer) {
-      return pokoj;
-    }
+    if (pokoj.id === numer) return pokoj;
   }
   return undefined;
 }
@@ -39,112 +37,54 @@ function stanPoczatkowy() {
 }
 
 function czyStan(wartosc) {
-  if (wartosc === null || typeof wartosc !== "object" || Array.isArray(wartosc)) {
-    return false;
+  if (wartosc === null || typeof wartosc !== "object" || Array.isArray(wartosc)) return false;
+  if (!Number.isInteger(wartosc.pokoj) || !znajdzPokoj(wartosc.pokoj)) return false;
+  if (!Number.isInteger(wartosc.energia) || wartosc.energia < 0 || wartosc.energia > MAKS_ENERGIA) return false;
+
+  const pola = ["karta", "bezpiecznik", "klucz", "kluczOdkryty", "okno", "drzwi", "zasilanie", "koniec", "wygrana"];
+  for (let pole of pola) {
+    if (typeof wartosc[pole] !== "boolean") return false;
   }
 
-  if (!Number.isInteger(wartosc.pokoj) || !znajdzPokoj(wartosc.pokoj)) {
-    return false;
-  }
-  if (!Number.isInteger(wartosc.energia) || wartosc.energia < 0 || wartosc.energia > MAKS_ENERGIA) {
-    return false;
-  }
-
-  if (typeof wartosc.karta !== "boolean") {
-    return false;
-  }
-  if (typeof wartosc.bezpiecznik !== "boolean") {
-    return false;
-  }
-  if (typeof wartosc.klucz !== "boolean") {
-    return false;
-  }
-  if (typeof wartosc.kluczOdkryty !== "boolean") {
-    return false;
-  }
-  if (typeof wartosc.okno !== "boolean") {
-    return false;
-  }
-  if (typeof wartosc.drzwi !== "boolean") {
-    return false;
-  }
-  if (typeof wartosc.zasilanie !== "boolean") {
-    return false;
-  }
-  if (typeof wartosc.koniec !== "boolean") {
-    return false;
-  }
-  if (typeof wartosc.wygrana !== "boolean") {
-    return false;
-  }
-
-  if (wartosc.bezpiecznik && wartosc.zasilanie) {
-    return false;
-  }
-  if (wartosc.kluczOdkryty && !wartosc.karta) {
-    return false;
-  }
-  if (wartosc.klucz && (!wartosc.karta || !wartosc.kluczOdkryty)) {
-    return false;
-  }
-  if (wartosc.drzwi && !wartosc.klucz) {
-    return false;
-  }
-  if (wartosc.okno && !wartosc.drzwi) {
-    return false;
-  }
-  if (wartosc.pokoj === 1 && !wartosc.drzwi) {
-    return false;
-  }
+  if (wartosc.bezpiecznik && wartosc.zasilanie) return false;
+  if (wartosc.kluczOdkryty && !wartosc.karta) return false;
+  if (wartosc.klucz && (!wartosc.karta || !wartosc.kluczOdkryty)) return false;
+  if (wartosc.drzwi && !wartosc.klucz) return false;
+  if (wartosc.okno && !wartosc.drzwi) return false;
+  if (wartosc.pokoj === 1 && !wartosc.drzwi) return false;
 
   if (wartosc.wygrana) {
-    let wyjscieGlowne = wartosc.pokoj === 6 && wartosc.karta && wartosc.zasilanie;
-    let wyjsciePrzezOkno = wartosc.pokoj === 1 && wartosc.okno;
-
-    if (!wartosc.koniec) {
-      return false;
-    }
-    if (!wyjscieGlowne && !wyjsciePrzezOkno) {
-      return false;
-    }
+    const wyjscieGlowne = wartosc.pokoj === 6 && wartosc.karta && wartosc.zasilanie;
+    const wyjsciePrzezOkno = wartosc.pokoj === 1 && wartosc.okno;
+    if (!wartosc.koniec || (!wyjscieGlowne && !wyjsciePrzezOkno)) return false;
   }
 
-  if (wartosc.koniec !== (wartosc.wygrana || wartosc.energia === 0)) {
-    return false;
-  }
-
+  if (wartosc.koniec !== (wartosc.wygrana || wartosc.energia === 0)) return false;
   return true;
 }
 
 function przejscie(stanPrzed, komenda) {
   if (stanPrzed !== null && typeof stanPrzed === "object" && stanPrzed.koniec) {
-    return { stan: stanPrzed, komunikat: "Gra jest zakończona." };
+    return { stan: stanPrzed, komunikat: "Gra już się skończyła." };
   }
 
   if (!czyStan(stanPrzed)) {
-    return { stan: stanPrzed, komunikat: "Nieprawidłowy stan gry." };
+    return { stan: stanPrzed, komunikat: "Błędny stan gry." };
   }
 
   let zmiany = {};
   let komunikat = "";
 
   if (komenda === "lewo" || komenda === "prawo") {
-    let krok;
-    if (komenda === "prawo") {
-      krok = 1;
-    } else {
-      krok = -1;
-    }
-
+    let krok = komenda === "prawo" ? 1 : -1;
     let numerDocelowy = stanPrzed.pokoj + krok;
     let pokojDocelowy = znajdzPokoj(numerDocelowy);
 
     if (pokojDocelowy === undefined) {
-      return { stan: stanPrzed, komunikat: "Ściana. Stan bez zmian." };
+      return { stan: stanPrzed, komunikat: "Ściana." };
     }
-
     if (stanPrzed.pokoj === 2 && komenda === "lewo" && !stanPrzed.drzwi) {
-      return { stan: stanPrzed, komunikat: "Przejście jest zablokowane." };
+      return { stan: stanPrzed, komunikat: "Drzwi są zamknięte." };
     }
 
     zmiany.pokoj = numerDocelowy;
@@ -153,54 +93,44 @@ function przejscie(stanPrzed, komenda) {
     switch (komenda) {
       case "karta":
         if (stanPrzed.pokoj !== 3) {
-          return { stan: stanPrzed, komunikat: "Tutaj nie ma karty do zabrania." };
+          return { stan: stanPrzed, komunikat: "Tutaj nie ma karty." };
         }
-
         if (!stanPrzed.karta) {
           zmiany.karta = true;
           komunikat = "Zabierasz kartę.";
         } else if (!stanPrzed.kluczOdkryty && !stanPrzed.klucz) {
           let nowyStan = { ...stanPrzed, kluczOdkryty: true };
-          return {
-            stan: nowyStan,
-            komunikat: "Karty już nie ma, ale dostrzegasz klucz na oddalonej szafce. Użyj akcja('klucz'), aby go zebrać."
-          };
+          return { stan: nowyStan, komunikat: "Nie ma już karty. Widzisz klucz. Użyj akcja('klucz')." };
         } else if (stanPrzed.kluczOdkryty && !stanPrzed.klucz) {
-          return {
-            stan: stanPrzed,
-            komunikat: "Karty już nie ma. Klucz leży na oddalonej szafce; użyj akcja('klucz')."
-          };
+          return { stan: stanPrzed, komunikat: "Klucz jest na szafce. Użyj akcja('klucz')." };
         } else {
-          return { stan: stanPrzed, komunikat: "Karty już nie ma." };
+          return { stan: stanPrzed, komunikat: "Nie ma już karty." };
         }
         break;
 
       case "klucz":
         if (stanPrzed.pokoj !== 3 || stanPrzed.klucz || !stanPrzed.karta || !stanPrzed.kluczOdkryty) {
-          return { stan: stanPrzed, komunikat: "Nie widzisz tu klucza do zebrania." };
+          return { stan: stanPrzed, komunikat: "Nie ma tu klucza." };
         }
-
         zmiany.klucz = true;
-        komunikat = "Zabierasz klucz. Może pasować do drzwi w bibliotece; spróbuj tam akcja('otworz').";
+        komunikat = "Zabierasz klucz. Otworzysz nim drzwi w bibliotece.";
         break;
 
       case "bezpiecznik":
         if (stanPrzed.pokoj !== 4 || stanPrzed.bezpiecznik || stanPrzed.zasilanie) {
-          return { stan: stanPrzed, komunikat: "Tutaj nie ma bezpiecznika do zabrania." };
+          return { stan: stanPrzed, komunikat: "Nie ma tu bezpiecznika." };
         }
-
         zmiany.bezpiecznik = true;
         komunikat = "Zabierasz bezpiecznik.";
         break;
 
       case "napraw":
         if (stanPrzed.pokoj !== 5 || stanPrzed.zasilanie) {
-          return { stan: stanPrzed, komunikat: "Tutaj nie ma nic do naprawienia." };
+          return { stan: stanPrzed, komunikat: "Nie ma tu nic do naprawy." };
         }
         if (!stanPrzed.bezpiecznik) {
           return { stan: stanPrzed, komunikat: "Nie masz bezpiecznika." };
         }
-
         zmiany.bezpiecznik = false;
         zmiany.zasilanie = true;
         komunikat = "Naprawiasz zasilanie.";
@@ -208,79 +138,51 @@ function przejscie(stanPrzed, komenda) {
 
       case "otworz":
         if (stanPrzed.pokoj === 2) {
-          if (stanPrzed.drzwi) {
-            return { stan: stanPrzed, komunikat: "Drzwi do zaplecza są już otwarte." };
-          }
+          if (stanPrzed.drzwi) return { stan: stanPrzed, komunikat: "Drzwi są już otwarte." };
           if (!stanPrzed.klucz) {
-            if (stanPrzed.kluczOdkryty) {
-              return { stan: stanPrzed, komunikat: "Nie masz klucza do tych drzwi." };
-            } else {
-              return { stan: stanPrzed, komunikat: "Nie ma nic do otwarcia." };
-            }
+            return { stan: stanPrzed, komunikat: stanPrzed.kluczOdkryty ? "Nie masz klucza." : "Nie ma tu nic do otwarcia." };
           }
-
           zmiany.drzwi = true;
-          komunikat = "Otwierasz drzwi do zaplecza biblioteki.";
+          komunikat = "Otwierasz drzwi do zaplecza.";
         } else if (stanPrzed.pokoj === 1) {
-          if (stanPrzed.okno) {
-            return { stan: stanPrzed, komunikat: "Okno jest już otwarte." };
-          }
-          if (!stanPrzed.klucz) {
-            return { stan: stanPrzed, komunikat: "Nie masz klucza." };
-          }
-
+          if (stanPrzed.okno) return { stan: stanPrzed, komunikat: "Okno jest już otwarte." };
+          if (!stanPrzed.klucz) return { stan: stanPrzed, komunikat: "Nie masz klucza." };
           zmiany.okno = true;
-          komunikat = "Otwierasz okno. Możesz spróbować uciec tą drogą.";
+          komunikat = "Otwierasz okno.";
         } else {
-          return { stan: stanPrzed, komunikat: "Nie ma nic do otwarcia." };
+          return { stan: stanPrzed, komunikat: "Nie ma tu nic do otwarcia." };
         }
         break;
 
       case "wyjdz":
         if (stanPrzed.pokoj === 6) {
-          if (!stanPrzed.karta) {
-            return { stan: stanPrzed, komunikat: "Nie masz karty." };
-          }
-          if (!stanPrzed.zasilanie) {
-            return { stan: stanPrzed, komunikat: "Nie ma zasilania." };
-          }
-
+          if (!stanPrzed.karta) return { stan: stanPrzed, komunikat: "Nie masz karty." };
+          if (!stanPrzed.zasilanie) return { stan: stanPrzed, komunikat: "Nie ma zasilania." };
           zmiany.wygrana = true;
-          komunikat = "Otwierasz wyjście i uciekasz z serwerowni.";
+          komunikat = "Otwierasz wyjście i uciekasz.";
         } else if (stanPrzed.pokoj === 1) {
-          if (!stanPrzed.okno) {
-            return { stan: stanPrzed, komunikat: "Okno jest zamknięte." };
-          }
-
+          if (!stanPrzed.okno) return { stan: stanPrzed, komunikat: "Okno jest zamknięte." };
           zmiany.wygrana = true;
-          komunikat = "Uciekasz przez okno, omijając główne wyjście.";
+          komunikat = "Uciekasz przez okno.";
         } else {
-          return { stan: stanPrzed, komunikat: "Nie ma dokąd wyjść." };
+          return { stan: stanPrzed, komunikat: "Nie możesz stąd wyjść." };
         }
         break;
 
       default:
-        return { stan: stanPrzed, komunikat: 'Nieznana komenda. Sprawdź gra.pomoc().' };
+        return { stan: stanPrzed, komunikat: "Nieznana komenda. Wpisz gra.pomoc()." };
     }
   }
 
   let nowaEnergia = stanPrzed.energia - 1;
-  let stanPo = {
-    ...stanPrzed,
-    ...zmiany,
-    energia: nowaEnergia
-  };
+  let stanPo = { ...stanPrzed, ...zmiany, energia: nowaEnergia };
+
+  if (stanPo.wygrana || nowaEnergia === 0) stanPo.koniec = true;
 
   if (stanPo.wygrana) {
-    stanPo.koniec = true;
-  } else if (nowaEnergia === 0) {
-    stanPo.koniec = true;
-  }
-
-  if (stanPo.wygrana) {
-    komunikat = komunikat + " WYGRANA! Udało ci się uciec.";
+    komunikat += " Wygrana!";
   } else if (stanPo.koniec) {
-    komunikat = komunikat + " Brak energii. Koniec gry — porażka.";
+    komunikat += " Brak energii. Koniec gry.";
   }
 
   return { stan: stanPo, komunikat: komunikat };
